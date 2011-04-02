@@ -51,17 +51,26 @@
 				[NSArray arrayWithObjects:[NSNumber numberWithInt:56400], [NSNumber numberWithInt:59100], @"10th Period", nil],
 				nil] retain];
 	
+	[self updateTimeFormat];
 	[self updateClock];
 	
 	timer = [[NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)1
 											  target:self
 											selector:@selector(_updateTimer:)
 											userInfo:nil repeats:YES] retain];
-    return self;
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(_menuClicked:)
+												 name:NSMenuDidBeginTrackingNotification
+											   object:theMenu];
+	return self;
 }
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:NSMenuDidBeginTrackingNotification
+												  object:theMenu];
     [theView release];
     [theMenu release];
 	[timer release];
@@ -137,7 +146,8 @@
 	int secs = abs(periodSeconds % 60);
 	int mins = abs(periodSeconds / 60);
 	BOOL isNegative = periodSeconds < 0;
-	NSString *str = [NSString stringWithFormat:@"%s%d:%02d", isNegative ? "-" : "", mins, secs];
+	NSString *format = showSeconds ? @"%s%d:%02d" : @"%s%d";
+	NSString *str = [NSString stringWithFormat:format, isNegative ? "-" : "", mins, secs];
 	
 	//[periodTitle release];
 	periodTitle = [[periods objectAtIndex:p] objectAtIndex:2];
@@ -154,6 +164,20 @@
 - (void)_updateTimer:(NSTimer*)timer
 {
 	[self updateClock];
+}
+
+- (void)_menuClicked:(NSNotification *)notification
+{
+	[self updateTimeFormat];
+	[self updateClock];
+}
+
+- (void)updateTimeFormat
+{
+	// if the normal clock menuextra shows seconds, we will too.
+	id format = [(id)CFPreferencesCopyAppValue((CFStringRef)@"DateFormat", (CFStringRef)@"com.apple.menuextra.clock") autorelease];
+	showSeconds = format == nil || [format rangeOfString:@":ss"].location != NSNotFound;
+
 }
 
 @end

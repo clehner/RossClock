@@ -21,11 +21,14 @@
 	NSString* periodTitle;
 	NSMenuItem* periodTitleMenuItem;
 	int period;
+	BOOL showSeconds;
 }
 
 - (NSString*)getClockText;
 - (void)updateClock;
 - (void)_updateTimer:(NSTimer*)timer;
+- (void)_menuClicked:(NSNotification *)notification;
+- (void)updateTimeFormat;
 
 
 @end
