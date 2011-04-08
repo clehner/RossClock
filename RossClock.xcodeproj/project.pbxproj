@@ -224,7 +224,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_NAME = RossClock;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = menu;
 			};
 			name = Debug;
 		};
